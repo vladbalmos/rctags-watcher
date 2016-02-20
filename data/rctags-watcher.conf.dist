@@ -1,0 +1,19 @@
+ctags:
+# bin: /usr/bin/ctags
+
+# spawn a new process after this period of inactivity is detected 
+# after a directory change event
+  job_timeout: 5000 # milliseconds. 
+# max_pending_jobs: 5
+
+logging:
+  level: DEBUG
+  log_destination: STDERR
+# log_destination: /var/log/rctags-watcher.log
+
+dirs:
+  project1:
+    path: /var/project1
+    recursive: true
+    pattern: *
+#   pattern: *.rb, *.py, *.php
