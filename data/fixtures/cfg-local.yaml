@@ -1,0 +1,9 @@
+logging: 
+  verbose: false
+
+dirs:
+  project1:
+    recursive: false
+
+  project2:
+    path: ~/project2

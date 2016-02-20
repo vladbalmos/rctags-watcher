@@ -1,0 +1,14 @@
+#ctags_path: /usr/bin/ctags
+
+logging:
+  verbose: true
+  log_destination: STDOUT
+
+dirs:
+  project1:
+    path: /var/run/project1
+    recursive: true
+
+  project2:
+    path: /var/run/project2
+    recursive: false
