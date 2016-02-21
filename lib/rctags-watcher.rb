@@ -1,9 +1,7 @@
-# foreach directory in configuration
-    # install filesystem watch
-# start event loop
-
 require "logger"
+require "rb-inotify"
 require_relative "configuration"
+require_relative "project_watcher"
 
 class RctagsWatcher < Logger::Application
 
@@ -11,16 +9,26 @@ class RctagsWatcher < Logger::Application
         @config = nil
         @program_arguments = arguments
         @watchers = {}
+        @notifier = INotify::Notifier.new
 
-        super('RctagsWatcher')
+        super 'RctagsWatcher'
         load_configuration config_files, arguments
     end
 
     def run
         setup_logging
         install_watchers
-        return 0
+        @notifier.run
     end 
+
+    def stop
+        @notifier.stop
+    end
+
+    def schedule_ctags_job(project_name, project_path)
+        log(DEBUG, "Activity detected on #{project_name} - #{project_path}")
+    end
+
 
     private
 
@@ -56,9 +64,9 @@ class RctagsWatcher < Logger::Application
 
     def install_watchers
         @config.projects.each do |project_name, settings|
-            watcher = ProjectWatcher.new(project_name, settings)
+            watcher = ProjectWatcher.new(project_name, settings, @notifier)
             @watchers[project_name] = watcher
-
+            watcher.add_observer self, :schedule_ctags_job
             watcher.watch
         end
     end

@@ -1,12 +1,14 @@
-require_relative "directory_iterator"
+require_relative "file_matcher"
 require "rb-inotify"
+require "observer"
 
 class ProjectWatcher
+    include Observable
 
     def initialize(name, settings, notifier)
         @notifier = notifier
         @name = name
-        @path = File.expand_path(settings['path'])
+        @path = File.expand_path settings['path']
         @recursive_watch = settings['recursive'] || false
         @file_patterns = nil
 
@@ -34,8 +36,14 @@ class ProjectWatcher
 
     def process_filesystem_event(event)
         absolute_filepath = event.absolute_name
-        puts absolute_filepath
-        puts @file_patterns
+
+        @file_patterns.each do |pattern|
+            if FileMatcher.file_matches_pattern? absolute_filepath, pattern
+                changed
+                notify_observers @name, @path
+            end
+        end
+        
     end
 end
 

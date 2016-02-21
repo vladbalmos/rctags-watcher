@@ -5,6 +5,10 @@ require "etc"
 
 CONFIG_FILENAME = 'rctags-watcher.conf'
 
+def shutdown(app)
+    app.stop
+end
+
 if __FILE__ == $0
     local_config_file = File.expand_path('~') + '/.' + CONFIG_FILENAME
     global_config_file = Etc.sysconfdir + '/' + CONFIG_FILENAME
@@ -18,6 +22,18 @@ if __FILE__ == $0
         config_files << local_config_file
     end
 
+
     app = RctagsWatcher.new(config_files, ARGV)
+
+    Signal.trap("INT") do
+        shutdown app
+        exit 0
+    end
+
+    Signal.trap("KILL") do
+        shutdown app
+        exit 0
+    end
+
     app.start
 end

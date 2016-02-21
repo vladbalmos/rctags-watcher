@@ -15,8 +15,8 @@ class Configuration
 
         @config = load_default
         @config_files.each do |file|
-            cfg = YAML.load_file(file)
-            @config.merge!(cfg)
+            cfg = YAML.load_file file
+            @config.merge! cfg
         end
 
         @configuration_is_loaded = true
