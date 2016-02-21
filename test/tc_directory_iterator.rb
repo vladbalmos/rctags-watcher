@@ -7,9 +7,9 @@ class TestDirectoryIterator < Test::Unit::TestCase
         dir_iterator = DirectoryIterator.new("data/fixtures/dir-iterator")
 
         list = []
-        dir_iterator.each_subdir do |dir|
+        dir_iterator.each_subdir { |dir|
             list << dir
-        end
+        }
 
         expected_base_path = File.expand_path("data/fixtures/dir-iterator")
 

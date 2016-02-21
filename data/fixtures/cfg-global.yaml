@@ -4,7 +4,7 @@ logging:
   verbose: true
   log_destination: STDOUT
 
-dirs:
+projects:
   project1:
     path: /var/run/project1
     recursive: true

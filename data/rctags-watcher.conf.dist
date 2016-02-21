@@ -11,7 +11,7 @@ logging:
   log_destination: STDERR
 # log_destination: /var/log/rctags-watcher.log
 
-dirs:
+projects:
   project1:
     path: /var/project1
     recursive: true

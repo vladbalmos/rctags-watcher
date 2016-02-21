@@ -2,9 +2,9 @@ require "yaml"
 
 class Configuration
 
-    def initialize(config_files, misc_settings = {})
+    def initialize(config_files, runtime_arguments = {})
         @config_files = config_files
-        @misc_settings = misc_settings
+        @runtime_arguments = runtime_arguments
         @configuration_is_loaded = false
     end
 
@@ -31,12 +31,16 @@ class Configuration
         return @config['logging']['log_destination'] == 'STDERR'
     end
 
-    def get_log_path
+    def log_path
         return @config['logging']['log_destination']
     end
 
     def log_level
         return @config['logging']['level']
+    end
+
+    def projects
+        return @config['projects']
     end
 
     private
@@ -46,7 +50,7 @@ class Configuration
                 'level' => 'DEBUG',
                 'log_destination' => 'STDERR'
             },
-            'dirs' => []
+            'projects' => []
         }
         return default
     end

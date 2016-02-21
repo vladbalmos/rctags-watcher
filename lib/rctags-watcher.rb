@@ -6,16 +6,20 @@ require "logger"
 require_relative "configuration"
 
 class RctagsWatcher < Logger::Application
-    def initialize(config_files = [])
+
+    def initialize(config_files = [], arguments)
         @config = nil
+        @program_arguments = arguments
+        @watchers = {}
 
         super('RctagsWatcher')
-        load_configuration config_files
+        load_configuration config_files, arguments
     end
 
     def run
         setup_logging
         install_watchers
+        return 0
     end 
 
     private
@@ -26,7 +30,7 @@ class RctagsWatcher < Logger::Application
         elsif @config.log_to_stderr?
             @logger = Logger.new(STDERR)
         else
-            log_path = @config.get_log_path
+            log_path = @config.log_path
             @logger = Logger.new(log_path)
         end
 
@@ -51,9 +55,15 @@ class RctagsWatcher < Logger::Application
     end
 
     def install_watchers
+        @config.projects.each do |project_name, settings|
+            watcher = ProjectWatcher.new(project_name, settings)
+            @watchers[project_name] = watcher
+
+            watcher.watch
+        end
     end
 
-    def load_configuration(config_files)
+    def load_configuration(config_files, runtime_arguments)
         @config = Configuration.new(config_files)
         @config.load
     end

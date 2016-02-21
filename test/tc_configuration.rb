@@ -9,8 +9,8 @@ class TestConfiguration < Test::Unit::TestCase
         config = cfg.load
 
         assert_equal false, config['logging']['verbose']
-        assert_equal false, config['dirs']['project1']['recursive']
-        assert_equal '~/project2', config['dirs']['project2']['path']
+        assert_equal false, config['projects']['project1']['recursive']
+        assert_equal '~/project2', config['projects']['project2']['path']
     end
 
     def test_loads_default_configuration
