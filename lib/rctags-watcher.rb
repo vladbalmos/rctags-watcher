@@ -12,20 +12,27 @@ class RctagsWatcher < Logger::Application
         @notifier = INotify::Notifier.new
 
         super 'RctagsWatcher'
+        # Create job queue for each project
+        # Create worker thread for reach queue
         load_configuration config_files, arguments
     end
 
     def run
         setup_logging
         install_watchers
+        # Start workers threads
         @notifier.run
     end 
 
     def stop
         @notifier.stop
+        # Stop/join worker threads
+        # Empty queues
     end
 
     def schedule_ctags_job(project_name, project_path)
+        # Check if job is already scheduled
+        # Add job to queue
         log(DEBUG, "Activity detected on #{project_name} - #{project_path}")
     end
 
