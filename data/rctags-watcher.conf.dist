@@ -1,10 +1,5 @@
 ctags:
-# bin: /usr/bin/ctags
-
-# spawn a new process after this period of inactivity is detected 
-# after a directory change event
-  job_timeout: 5000 # milliseconds. 
-# max_pending_jobs: 5
+  bin: /usr/bin/ctags
 
 logging:
   level: DEBUG
@@ -15,5 +10,6 @@ projects:
   project1:
     path: /var/project1
     recursive: true
+#   tags_filename: tags
     pattern: *
 #   pattern: *.rb, *.py, *.php

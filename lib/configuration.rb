@@ -43,6 +43,10 @@ class Configuration
         return @config['projects']
     end
 
+    def ctags_settings
+        return @config['ctags']
+    end
+
     private
     def load_default
         default = {

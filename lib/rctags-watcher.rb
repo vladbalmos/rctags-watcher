@@ -3,6 +3,7 @@ require "rb-inotify"
 require_relative "configuration"
 require_relative "project_watcher"
 require_relative "job_scheduler"
+require_relative "worker"
 
 class RctagsWatcher < Logger::Application
 
@@ -15,31 +16,41 @@ class RctagsWatcher < Logger::Application
         super 'RctagsWatcher'
         load_configuration config_files, arguments
         setup_logging
-        @job_scheduler = JobScheduler.new(@logger)
-        # initialize worker
+        @job_scheduler = JobScheduler.new
+        @job_scheduler.logger = @logger
+        @worker = Worker.new(@job_scheduler.queue)
+        @worker.logger = @logger
     end
 
     def run
         install_watchers
-        # Worker start
         @notifier.run
     end 
 
     def stop
         @notifier.stop
-        # Worker end
+        @worker.stop
     end
 
     def schedule_ctags_job(project_name, changed_path)
         log(DEBUG, "Activity detected on #{project_name} - #{changed_path}")
 
-        if @job_scheduler.can_schedule?
-            job_params = { :name => project_name, 
-                           :change_path => changed_path,
-                           :settings => project_settings
-                         }
-            job_scheduler.schedule job_params
+        if !@job_scheduler.can_schedule?
+            return;
         end
+
+        project_settings = @config.projects[project_name]
+        ctags_settings = @config.ctags_settings
+        job_settings = {
+            :project_settings => project_settings,
+            :ctags_settings => ctags_settings
+        }
+
+        job_params = { :name => project_name, 
+                       :change_path => changed_path,
+                       :settings => job_settings
+        }
+        @job_scheduler.schedule job_params
     end
 
 
