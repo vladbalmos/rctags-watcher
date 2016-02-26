@@ -4,45 +4,30 @@ require "logger"
 
 class TestWorker < Test::Unit::TestCase
 
-    # Test that the worker thread exists after
-    # a predetermined timeout passes if the work queue is empty
-    def test_worker_stops_with_timeout
-        work_queue = Queue.new
+    def test_make_ctags_command_returns_correct_format
+        test_data = commands_params_data_provider
 
-        w = Worker.new(work_queue)
+        test_data.each do |data|
+            params, expected = data
+            actual = Worker.make_ctags_command params
 
-        duration = time_block { w.stop }
-
-        assert_equal true, duration > 1 and duration < 2
+            assert_equal expected, actual
+        end
     end
 
-
-    # Test that the worker thread exists just after finishing a running job
-    def test_worker_stops_right_after_job_finishes
-        work_queue = Queue.new
-
-        w = Worker.new(work_queue)
-        work_queue << {
-            :command => '/bin/sleep 5'
-        }
-
-        sleep(1.0 / 5.0) # We need this in order to 
-                         # allow for the thread to pop the queue and start running
-        duration = time_block { w.stop }
-
-        assert_equal true, (duration >= 4.5 and duration < 6), "Duration was #{duration.to_s}"
+    def commands_params_data_provider
+        test_data = []
+        test_data << [
+            {
+                :ctags_binary => 'ctags',
+                :scan_path => '/tmp',
+                :tags_filename => 'tags',
+                :recursive => true
+            },
+            'ctags -f tags -R /tmp 1>/dev/null 2>&1'
+        ]
+        return test_data
     end
-
-    private
-
-    def time_block
-        start_time = Time.now.to_f
-        yield
-        end_time = Time.now.to_f
-
-        return end_time - start_time
-    end
-
 
 end
 

@@ -18,8 +18,11 @@ class RctagsWatcher < Logger::Application
         setup_logging
         @job_scheduler = JobScheduler.new
         @job_scheduler.logger = @logger
+
         @worker = Worker.new(@job_scheduler.queue)
         @worker.logger = @logger
+
+        @job_scheduler.worker = @worker
     end
 
     def run

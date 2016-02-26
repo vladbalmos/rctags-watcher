@@ -5,20 +5,32 @@ class JobScheduler
 
     include LoggerHelper
     attr_reader :queue
+    attr_accessor :worker
 
     def initialize
         @queue = Queue.new
+        @worker = nil
     end
 
     def can_schedule?
+        if !@worker.nil? and @worker.job_running?
+            return false
+        end
+
         return @queue.empty?
     end
 
     def schedule(job_params)
         log(Logger::INFO, "Scheduling ctags job for #{job_params[:name]}")
 
-        job = make_job job_params
+        begin
+            job = make_job job_params
+        rescue RuntimeError => e
+            log(Logger::ERROR, e.message)
+            return false
+        end
         @queue << job
+        return true
     end
 
     def make_job(job_params)
@@ -31,17 +43,18 @@ class JobScheduler
             ctags_binary = 'ctags'
         end
 
-        recursive_flag = '-R' unless project_settings[:recursive] == false
+        scan_path = File.expand_path project_settings["path"]
 
-        scan_path = project_settings["path"]
+        raise "Project path does not exist: #{scan_path}" unless File.directory? scan_path
 
         tags_filename = project_settings['tags_filename'].nil? ? 'tags' : project_settings["tags_filename"]
-        tags_file_path = project_settings['path'] + "/#{tags_filename}"
 
-        command = "#{ctags_binary} #{recursive_flag} #{scan_path} -f #{tags_file_path} 2>&1"
         job = {
             :name => job_params[:name] + '_ctags_job',
-            :command => command
+            :ctags_binary => ctags_binary,
+            :scan_path => scan_path,
+            :tags_filename => tags_filename,
+            :recursive => project_settings['recursive']
         }
         return job
     end

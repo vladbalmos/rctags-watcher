@@ -1,6 +1,8 @@
 require_relative "logger_helper"
 require "logger"
 require "thread"
+require "tmpdir"
+require "fileutils"
 
 class Worker < Thread
 
@@ -14,21 +16,55 @@ class Worker < Thread
         @break_loop_sem = Mutex.new
     end
 
+    def self.make_ctags_command(job_params)
+        if job_params.has_key? :test_command
+            return job_params[:test_command] # aids in testing
+        end
+        ctags_binary = job_params[:ctags_binary]
+        scan_path = job_params[:scan_path]
+        tags_filename = job_params[:tags_filename]
+
+        recursive_flag = '-R' unless job_params[:recursive] == false
+        command = "#{ctags_binary} -f #{tags_filename} #{recursive_flag} #{scan_path} 1>/dev/null 2>&1"
+
+        return command
+    end
+
     def work(work_queue)
         while job = work_queue.pop
             set_job_state :running
-            log(Logger::DEBUG, "Running command #{job[:command]}")
-            result = system job[:command]
+            command = self.class.make_ctags_command job
+            log(Logger::DEBUG, "Running command #{command}")
 
-            if result.nil?
-                exit_status = $?.exitstatus.to_s
-                log(Logger::ERROR, "Unable to execute job command. Exit status: #{exit_status}")
-            elsif result == false
-                exit_status = $?.exitstatus.to_s
-                log(Logger::ERROR, "Job command was unsuccessful. Exit status: #{exit_status}")
-            else
-                log(Logger::INFO, "Job command executed successfully.")
+            # Run command in a temporary dir
+            Dir.mktmpdir("rctags") do |tmpdir| 
+                log(Logger::DEBUG, "Created #{tmpdir}")
+                Dir.chdir(tmpdir) {
+                    log(Logger::DEBUG, "Changed current directory to #{tmpdir} before running command")
+                    result = system command
+
+                    if result.nil?
+                        exit_status = $?.exitstatus.to_s
+                        log(Logger::ERROR, "Unable to execute job command. Exit status: #{exit_status}")
+                        next
+                    end
+
+                    if result == false
+                        exit_status = $?.exitstatus.to_s
+                        log(Logger::ERROR, "Job command was unsuccessful. Exit status: #{exit_status}")
+                        next
+                    end
+
+                    log(Logger::INFO, "Job command executed successfully.")
+                    
+                    # Moving the file to its final location
+                    tmpsrc =  "#{tmpdir}/#{job[:tags_filename]}"
+                    dst = "#{job[:scan_path]}/#{job[:tags_filename]}"
+                    FileUtils.mv tmpsrc, dst, :force => true
+                    log(Logger::DEBUG, "Moved #{tmpsrc} -> #{dst}")
+                }
             end
+
             set_job_state :not_running
             break if break_loop?
         end
