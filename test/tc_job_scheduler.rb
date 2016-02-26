@@ -27,7 +27,7 @@ class TestJobScheduler < Test::Unit::TestCase
 
         assert_instance_of Hash, job
         assert_equal 'test_project_ctags_job', job[:name]
-        assert_equal 'ctags -R /tmp -f /tmp/tags', job[:command]
+        assert_equal 'ctags -R /tmp -f /tmp/tags 2>&1', job[:command]
     end
 
     def test_job_is_scheduled

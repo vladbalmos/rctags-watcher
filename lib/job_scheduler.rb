@@ -38,7 +38,7 @@ class JobScheduler
         tags_filename = project_settings['tags_filename'].nil? ? 'tags' : project_settings["tags_filename"]
         tags_file_path = project_settings['path'] + "/#{tags_filename}"
 
-        command = "#{ctags_binary} #{recursive_flag} #{scan_path} -f #{tags_file_path}"
+        command = "#{ctags_binary} #{recursive_flag} #{scan_path} -f #{tags_file_path} 2>&1"
         job = {
             :name => job_params[:name] + '_ctags_job',
             :command => command
