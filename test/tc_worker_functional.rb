@@ -1,4 +1,4 @@
-require_relative "../lib/worker"
+require_relative "../lib/rctags-watcher/worker"
 require "test/unit"
 require "tmpdir"
 require "fileutils"

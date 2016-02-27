@@ -1,4 +1,4 @@
-require_relative "../lib/file_matcher"
+require_relative "../lib/rctags-watcher/file_matcher"
 require "test/unit"
 
 class TestFileMatcher < Test::Unit::TestCase

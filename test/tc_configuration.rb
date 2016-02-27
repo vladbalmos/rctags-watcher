@@ -1,4 +1,4 @@
-require_relative "../lib/configuration"
+require_relative "../lib/rctags-watcher/configuration"
 require "test/unit"
 
 class TestConfiguration < Test::Unit::TestCase

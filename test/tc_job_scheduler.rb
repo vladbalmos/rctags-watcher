@@ -1,4 +1,4 @@
-require_relative "../lib/job_scheduler"
+require_relative "../lib/rctags-watcher/job_scheduler"
 require "tmpdir"
 require "test/unit"
 

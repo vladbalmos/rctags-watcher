@@ -1,9 +1,9 @@
 require "logger"
 require "rb-inotify"
-require_relative "configuration"
-require_relative "project_watcher"
-require_relative "job_scheduler"
-require_relative "worker"
+require_relative "rctags-watcher/configuration"
+require_relative "rctags-watcher/project_watcher"
+require_relative "rctags-watcher/job_scheduler"
+require_relative "rctags-watcher/worker"
 
 class RctagsWatcher < Logger::Application
 
