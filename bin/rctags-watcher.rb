@@ -1,6 +1,7 @@
 #!/usr/bin/env ruby
 
-require_relative "../lib/rctags-watcher"
+require_relative "../lib/rctags-watcher" if File.file?((File.dirname __FILE__) + "/../lib/rctags-watcher.rb")
+require "rctags-watcher" unless File.file?((File.dirname __FILE__) + "/../lib/rctags-watcher.rb")
 require "etc"
 
 CONFIG_FILENAME = 'rctags-watcher.conf'
