@@ -25,7 +25,7 @@ class TestWorkerFunctional < Test::Unit::TestCase
         w = Worker.new(work_queue)
         tmpdir = Dir.mktmpdir
         work_queue << {
-            :test_command => '/bin/sleep 5 && touch tags',
+            :test_command => '/bin/sleep 2 && touch tags',
             :scan_path => tmpdir,
             :tags_filename => 'tags'
         }
@@ -36,7 +36,7 @@ class TestWorkerFunctional < Test::Unit::TestCase
 
         FileUtils.remove_entry tmpdir
 
-        assert_equal true, (duration >= 4.5 and duration < 6), "Duration was #{duration.to_s}"
+        assert_equal true, (duration >= 1.5 and duration < 3), "Duration was #{duration.to_s}"
     end
 
     private

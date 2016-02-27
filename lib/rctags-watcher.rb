@@ -13,9 +13,11 @@ class RctagsWatcher < Logger::Application
         @watchers = {}
         @notifier = INotify::Notifier.new
 
-        super 'RctagsWatcher'
+        super('RctagsWatcher')
+
         load_configuration config_files, arguments
         setup_logging
+
         @job_scheduler = JobScheduler.new
         @job_scheduler.logger = @logger
 
@@ -36,7 +38,7 @@ class RctagsWatcher < Logger::Application
     end
 
     def schedule_ctags_job(project_name, changed_path)
-        log(DEBUG, "Activity detected on #{project_name} - #{changed_path}")
+        log DEBUG, "Activity detected on #{project_name} - #{changed_path}"
 
         if !@job_scheduler.can_schedule?
             return;

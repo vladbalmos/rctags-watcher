@@ -21,12 +21,12 @@ class JobScheduler
     end
 
     def schedule(job_params)
-        log(Logger::INFO, "Scheduling ctags job for #{job_params[:name]}")
+        log Logger::INFO, "Scheduling ctags job for #{job_params[:name]}"
 
         begin
             job = make_job job_params
         rescue RuntimeError => e
-            log(Logger::ERROR, e.message)
+            log Logger::ERROR, e.message
             return false
         end
         @queue << job

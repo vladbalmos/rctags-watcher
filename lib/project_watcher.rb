@@ -46,18 +46,3 @@ class ProjectWatcher
         
     end
 end
-
-
-if __FILE__ == $0
-    notifier = INotify::Notifier.new
-    settings = {
-        'path' => '~/Development/zazat/site',
-        'recursive' => true,
-        'pattern' => '*.php'
-    }
-
-    watcher = ProjectWatcher.new('zazat', settings, notifier)
-    watcher.watch
-
-    notifier.run
-end

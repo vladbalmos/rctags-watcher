@@ -20,6 +20,7 @@ class Worker < Thread
         if job_params.has_key? :test_command
             return job_params[:test_command] # aids in testing
         end
+
         ctags_binary = job_params[:ctags_binary]
         scan_path = job_params[:scan_path]
         tags_filename = job_params[:tags_filename]
@@ -38,28 +39,28 @@ class Worker < Thread
         while job = work_queue.pop
             set_job_state :running
             command = self.class.make_ctags_command job
-            log(Logger::DEBUG, "Running command #{command}")
+            log Logger::DEBUG, "Running command #{command}"
 
             # Run command in a temporary dir
             Dir.mktmpdir("rctags") do |tmpdir| 
-                log(Logger::DEBUG, "Created #{tmpdir}")
+                log Logger::DEBUG, "Created #{tmpdir}"
                 Dir.chdir(tmpdir) {
-                    log(Logger::DEBUG, "Changed current directory to #{tmpdir} before running command")
+                    log Logger::DEBUG, "Changed current directory to #{tmpdir} before running command"
                     result = system command
 
                     if result.nil?
                         exit_status = $?.exitstatus.to_s
-                        log(Logger::ERROR, "Unable to execute job command. Exit status: #{exit_status}")
+                        log Logger::ERROR, "Unable to execute job command. Exit status: #{exit_status}"
                         next
                     end
 
                     if result == false
                         exit_status = $?.exitstatus.to_s
-                        log(Logger::ERROR, "Job command was unsuccessful. Exit status: #{exit_status}")
+                        log Logger::ERROR, "Job command was unsuccessful. Exit status: #{exit_status}"
                         next
                     end
 
-                    log(Logger::INFO, "Job command executed successfully.")
+                    log Logger::INFO, "Job command executed successfully."
                     
                     # Moving the file to its final location
                     tmpsrc =  "#{tmpdir}/#{job[:tags_filename]}"
@@ -75,13 +76,14 @@ class Worker < Thread
     end
 
     def stop
-        if job_running?
-            # If a job is running we set a "break loop" flag so we can do a clean exit
-            activate_break_loop_flag
-            join
+        if !job_running?
+            join 1
             return
         end
-        join 1
+
+        # If a job is running we set a "break loop" flag so we can do a clean exit
+        activate_break_loop_flag
+        join
     end
 
     def job_running?

@@ -18,7 +18,6 @@ if __FILE__ == $0
         config_files << local_config_file
     end
 
-
     app = RctagsWatcher.new(config_files, ARGV)
 
     begin
