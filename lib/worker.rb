@@ -24,8 +24,12 @@ class Worker < Thread
         scan_path = job_params[:scan_path]
         tags_filename = job_params[:tags_filename]
 
-        recursive_flag = '-R' unless job_params[:recursive] == false
-        command = "#{ctags_binary} -f #{tags_filename} #{recursive_flag} #{scan_path} 1>/dev/null 2>&1"
+        languages_option = '--languages=' + job_params[:ctags_languages].join(',') if job_params[:ctags_languages].instance_of? Array
+        command = "#{ctags_binary}"
+        command += " #{languages_option}" if languages_option
+        command += " -f #{tags_filename}"
+        command += " -R" if job_params[:recursive]
+        command += " #{scan_path} 1>/dev/null 2>&1"
 
         return command
     end

@@ -13,3 +13,4 @@ projects:
 #   tags_filename: tags
     pattern: *
 #   pattern: *.rb, *.py, *.php
+#   ctags_languages: php,javascript # use any of the identifiers provided by ctags --list-languages

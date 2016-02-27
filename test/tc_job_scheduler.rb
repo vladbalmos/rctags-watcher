@@ -58,6 +58,37 @@ class TestJobScheduler < Test::Unit::TestCase
         assert_equal tmp_dir, job[:scan_path]
     end
 
+    def test_ctags_languages_format_is_correct
+        scheduler = JobScheduler.new
+
+        tmp_dir = Dir.tmpdir
+
+        job_params = {
+            :name => 'test_project',
+            :change_path => tmp_dir,
+            :settings => {
+                :project_settings => {
+                    "path" => tmp_dir,
+                    "recursive" => true,
+                    "pattern" => '*',
+                    "ctags_languages" => 'php,javascript,ruby,python,c'
+                },
+                :ctags_settings => nil
+            }
+        }
+
+        job = scheduler.make_job job_params
+        ctags_languages = job[:ctags_languages]
+
+        assert_instance_of Array, ctags_languages
+        assert_equal 5, ctags_languages.count
+        assert_equal true, ctags_languages.include?('php')
+        assert_equal true, ctags_languages.include?('javascript')
+        assert_equal true, ctags_languages.include?('ruby')
+        assert_equal true, ctags_languages.include?('python')
+        assert_equal true, ctags_languages.include?('c')
+    end
+
     def test_job_is_scheduled
         tmp_dir = Dir.tmpdir
 

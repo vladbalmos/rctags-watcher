@@ -48,15 +48,27 @@ class JobScheduler
         raise "Project path does not exist: #{scan_path}" unless File.directory? scan_path
 
         tags_filename = project_settings['tags_filename'].nil? ? 'tags' : project_settings["tags_filename"]
+        ctags_languages = prepare_ctags_languages project_settings["ctags_languages"]
 
         job = {
             :name => job_params[:name] + '_ctags_job',
             :ctags_binary => ctags_binary,
             :scan_path => scan_path,
             :tags_filename => tags_filename,
-            :recursive => project_settings['recursive']
+            :recursive => project_settings['recursive'],
+            :ctags_languages => ctags_languages
         }
         return job
+    end
+
+    def prepare_ctags_languages(languages)
+        unless languages
+            return
+        end
+        lang_array = languages.split(',').compact
+        lang_array.collect! { |item| item.strip }
+
+        return lang_array
     end
 
 end

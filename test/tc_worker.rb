@@ -22,9 +22,21 @@ class TestWorker < Test::Unit::TestCase
                 :ctags_binary => 'ctags',
                 :scan_path => '/tmp',
                 :tags_filename => 'tags',
-                :recursive => true
+                :recursive => true,
+                :ctags_languages => nil
             },
             'ctags -f tags -R /tmp 1>/dev/null 2>&1'
+        ]
+
+        test_data << [
+            {
+                :ctags_binary => 'ctags',
+                :scan_path => '/tmp',
+                :tags_filename => 'tags',
+                :recursive => true,
+                :ctags_languages => ['php', 'javascript', 'ruby', 'python', 'c', 'c++']
+            },
+            'ctags --languages=php,javascript,ruby,python,c,c++ -f tags -R /tmp 1>/dev/null 2>&1'
         ]
         return test_data
     end
