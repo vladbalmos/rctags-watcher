@@ -7,22 +7,22 @@ require_relative "rctags-watcher/worker"
 
 class RctagsWatcher < Logger::Application
 
-    def initialize(config_files = [], arguments)
+    def initialize(config_files = [])
         @config = nil
-        @program_arguments = arguments
         @watchers = {}
         @notifier = INotify::Notifier.new
 
+
         super('RctagsWatcher')
 
-        load_configuration config_files, arguments
+        load_configuration config_files
         setup_logging
 
         @job_scheduler = JobScheduler.new
-        @job_scheduler.logger = @logger
+        @job_scheduler.logger = logger
 
         @worker = Worker.new(@job_scheduler.queue)
-        @worker.logger = @logger
+        @worker.logger = logger
 
         @job_scheduler.worker = @worker
     end
@@ -63,13 +63,14 @@ class RctagsWatcher < Logger::Application
 
     def setup_logging
         if @config.log_to_stdout?
-            @logger = Logger.new(STDOUT)
+            logdev = STDOUT
         elsif @config.log_to_stderr?
-            @logger = Logger.new(STDERR)
+            logdev = STDERR
         else
-            log_path = @config.log_path
-            @logger = Logger.new(log_path)
+            logdev = @config.log_path
         end
+
+        set_log logdev
 
         case @config.log_level
         when 'DEBUG'
@@ -87,8 +88,7 @@ class RctagsWatcher < Logger::Application
         else
             raise "Unknown log level #{@config.log_level}"
         end
-        @logger.level = log_level
-
+        level = log_level
     end
 
     def install_watchers
@@ -100,7 +100,7 @@ class RctagsWatcher < Logger::Application
         end
     end
 
-    def load_configuration(config_files, runtime_arguments)
+    def load_configuration(config_files)
         @config = Configuration.new(config_files)
         @config.load
     end

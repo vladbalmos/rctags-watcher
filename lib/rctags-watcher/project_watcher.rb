@@ -12,8 +12,8 @@ class ProjectWatcher
         @recursive_watch = settings['recursive'] || false
         @file_patterns = nil
 
-        if !File.directory? @path
-            raise "Project path invalid for project #{@name}"
+        unless File.directory? @path
+            raise "Project path invalid for project #{@name}: #{@path}"
         end
 
         if settings['pattern'].nil?
