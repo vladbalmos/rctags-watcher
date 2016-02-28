@@ -39,6 +39,7 @@ EOT
     s.license     = 'MIT'
     s.platform    = Gem::Platform::CURRENT
     s.executables << 'rctags-watcher.rb'
+    s.add_runtime_dependency 'rb-inotify', '= 0.9.7'
 
     puts s.version
 end
