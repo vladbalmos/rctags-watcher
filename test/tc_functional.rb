@@ -17,7 +17,7 @@ class TestFunctional < Test::Unit::TestCase
         pid = wait_thr.pid
 
         # Wait a bit for the initialization
-        sleep 1.0/5.0
+        sleep 1
 
         # Modify the source code a bit
         php_file = ENV['TEST_PHP_FILE']
@@ -32,7 +32,7 @@ class TestFunctional < Test::Unit::TestCase
         File.open(php_file, 'a') { |f| f.puts test_php_function }
         puts $\, "Modify source file command exit status: #{$?.to_i}"
 
-        sleep 1
+        sleep 5
 
         Process.kill("INT", pid)
 
