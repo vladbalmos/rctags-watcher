@@ -13,7 +13,7 @@ class JobScheduler
     end
 
     def can_schedule?
-        if !@worker.nil? and @worker.job_running?
+        if !@worker.nil? && @worker.job_running?
             return false
         end
 
@@ -37,7 +37,7 @@ class JobScheduler
         ctags_settings = job_params[:settings][:ctags_settings]
         project_settings = job_params[:settings][:project_settings]
 
-        if !ctags_settings.nil? and !ctags_settings[:bin].nil?
+        if !ctags_settings.nil? && !ctags_settings[:bin].nil?
             ctags_binary = ctags_settings[:bin]
         else
             ctags_binary = 'ctags'
@@ -60,6 +60,8 @@ class JobScheduler
         }
         return job
     end
+
+    private
 
     def prepare_ctags_languages(languages)
         unless languages

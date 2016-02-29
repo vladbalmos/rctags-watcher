@@ -17,15 +17,14 @@ class Worker < Thread
     end
 
     def self.make_ctags_command(job_params)
-        if job_params.has_key? :test_command
-            return job_params[:test_command] # aids in testing
-        end
+        return job_params[:test_command] if job_params.has_key? :test_command # aids with testing
 
         ctags_binary = job_params[:ctags_binary]
         scan_path = job_params[:scan_path]
         tags_filename = job_params[:tags_filename]
 
         languages_option = '--languages=' + job_params[:ctags_languages].join(',') if job_params[:ctags_languages].instance_of? Array
+
         command = "#{ctags_binary}"
         command += " #{languages_option}" if languages_option
         command += " -f #{tags_filename}"
@@ -66,7 +65,7 @@ class Worker < Thread
                     tmpsrc =  "#{tmpdir}/#{job[:tags_filename]}"
                     dst = "#{job[:scan_path]}/#{job[:tags_filename]}"
                     FileUtils.mv tmpsrc, dst, :force => true
-                    log(Logger::DEBUG, "Moved #{tmpsrc} -> #{dst}")
+                    log Logger::DEBUG, "Moved #{tmpsrc} -> #{dst}" 
                 }
             end
 
@@ -76,7 +75,7 @@ class Worker < Thread
     end
 
     def stop
-        if !job_running?
+        unless job_running?
             join 1
             return
         end
@@ -100,19 +99,15 @@ class Worker < Thread
             raise ArgumentError, "Invalid job state given: " + state.to_s
         end
 
-        @job_state_sem.synchronize {
-            @job_state = state
-        }
+        @job_state_sem.synchronize { @job_state = state }
     end
 
     def activate_break_loop_flag
-        @break_loop_sem.synchronize {
-            @break_loop = true
-        }
+        @break_loop_sem.synchronize { @break_loop = true }
     end
 
     def break_loop?
-        return @break_loop
+        @break_loop_sem.synchronize { return @break_loop }
     end
 
 end

@@ -10,7 +10,6 @@ class ProjectWatcher
         @name = name
         @path = File.expand_path settings['path']
         @recursive_watch = settings['recursive'] || false
-        @file_patterns = nil
 
         unless File.directory? @path
             raise "Project path invalid for project #{@name}: #{@path}"
@@ -33,6 +32,8 @@ class ProjectWatcher
             process_filesystem_event event
         }
     end
+
+    private 
 
     def process_filesystem_event(event)
         absolute_filepath = event.absolute_name
