@@ -12,7 +12,7 @@ class TestFunctional < Test::Unit::TestCase
     def test
         config_file = ENV['TEST_CONFIG_FILE']
         binary = "bin/rctags-watcher.rb -c #{config_file}"
-        puts binary
+        puts $\, binary
         stdin, stdout, stderr, wait_thr = Open3.popen3 binary
         pid = wait_thr.pid
 
