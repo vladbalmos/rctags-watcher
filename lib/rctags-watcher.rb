@@ -40,7 +40,7 @@ class RctagsWatcher < Logger::Application
     def schedule_ctags_job(project_name, changed_path)
         log DEBUG, "Activity detected on #{project_name} - #{changed_path}"
 
-        if !@job_scheduler.can_schedule?
+        unless @job_scheduler.can_schedule?
             return;
         end
 
