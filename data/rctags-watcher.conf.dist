@@ -1,16 +1,42 @@
+#######################################
+# Default settings for the ctags binary
+#######################################
 ctags:
-  bin: /usr/bin/ctags
+  # Path to the ctags binary
+  # Uncomment this if your ctags binary is not in your $PATH
+  #bin: /usr/bin/ctags
 
+##############################
+# Logging settings
+##############################
 logging:
+  # Possible values are: DEBUG, ERROR, FATAL, INFO, UNKNOWN, WARN
   level: DEBUG
-  log_destination: STDERR
-# log_destination: /var/log/rctags-watcher.log
+  # Possible values are: STDOUT, STDERR or a file
+  #log_destination: /var/log/rctags-watcher.log
+  log_destination: STDOUT
 
+##############################
+# Projects 
+##############################
+# Set the path and options for each project 
 projects:
-  project1:
+
+  # Give your project a meaningful name
+  my_project:
+
+    # Where's your project located?
     path: /var/project1
+
+    # Should we recursively scan for file system changes?
     recursive: true
-#   tags_filename: tags
-    pattern: *
-#   pattern: *.rb, *.py, *.php
-#   ctags_languages: php,javascript # use any of the identifiers provided by ctags --list-languages
+
+    # Uncomment and change it if you want to name your tags file differently
+    #tags_filename: tags
+
+    # If you change any of these files the tags will be regenerated
+    pattern: '*.rb *.py, *.php *.c'
+
+    # Uncomment this if you want to generate tags for specific languages only.
+    # Use any of the identifiers provided by ctags --list-languages
+    #ctags_languages: php,javascript,ruby 
