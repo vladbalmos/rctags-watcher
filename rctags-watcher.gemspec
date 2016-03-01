@@ -40,6 +40,7 @@ EOT
     s.platform    = Gem::Platform::CURRENT
     s.executables << 'rctags-watcher.rb'
     s.add_runtime_dependency 'rb-inotify', '= 0.9.7'
+    s.required_ruby_version = '>= 2.1.0'
 
     puts s.version
 end
