@@ -48,7 +48,7 @@ bin/rctags-watcher.rb --config /path/to/my/custom/config/file
 ```
 This method won't load the main `/etc/rctags-watcher.conf` file or the one present in your $HOME directory. Each configuration change will require you to restart the **rctags-watcher** process.
 
-To get started copy the default config file `data/rctags-watcher.conf` to `~/.rctags-watcher.conf` and create a new project section in it. See the [sample project](https://github.com/vladbalmos/rctags-watcher/blob/master/data/rctags-watcher.conf.dist) for more information.
+To get started copy the default config file `data/rctags-watcher.conf` to `~/.rctags-watcher.conf` and create a new project section in it. See the [sample project](https://raw.githubusercontent.com/vladbalmos/rctags-watcher/master/data/rctags-watcher.conf.dist) for more information.
 
 ## Motivation
 I wanted to learn Ruby and this seemed a great way to shoot two birds with one stone.
