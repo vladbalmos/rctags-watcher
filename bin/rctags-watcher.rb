@@ -1,4 +1,5 @@
 #!/usr/bin/env ruby
+# %license%
 
 require_relative "../lib/rctags-watcher" if File.file?((File.dirname __FILE__) + "/../lib/rctags-watcher.rb")
 require "rctags-watcher" unless File.file?((File.dirname __FILE__) + "/../lib/rctags-watcher.rb")
@@ -9,7 +10,6 @@ require "ostruct"
 DEFAULT_CONFIG_FILENAME = 'rctags-watcher.conf'
 
 
-# Parse command line arguments
 commandline_options = OpenStruct.new
 commandline_options.config_file = nil
 
@@ -37,7 +37,6 @@ end
 opt_parser.parse!(ARGV)
 
 config_files = []
-
 unless commandline_options.config_file.nil?
     config_files << commandline_options.config_file
 else

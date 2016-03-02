@@ -1,3 +1,4 @@
+# %license%
 require_relative "logger_helper"
 require "logger"
 require "thread"

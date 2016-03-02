@@ -1,3 +1,5 @@
+# %license%
+
 require "logger"
 require "rb-inotify"
 require_relative "rctags-watcher/configuration"
@@ -6,6 +8,14 @@ require_relative "rctags-watcher/job_scheduler"
 require_relative "rctags-watcher/worker"
 require_relative "rctags-watcher/version"
 
+##
+# The main application class.
+# Application flow:
+#   1. Load the yaml configuration
+#   2. Setup logging
+#   3. Create the worker thread and the job queue
+#   4. Install inotify watchers on the directories specified in the configuration files
+#   5. Start the inotify event loop
 class RctagsWatcher < Logger::Application
 
     include RctagsWatcherVersion

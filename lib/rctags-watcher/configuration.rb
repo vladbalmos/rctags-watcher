@@ -1,10 +1,16 @@
+# %license%
 require "yaml"
 
+##
+# Merges YAML files to generate the final app configuration.
 class Configuration
 
-    def initialize(config_files, runtime_arguments = {})
+    ##
+    # THe configuration from the files which appear last in the 
+    # config_files array gets merged into the configuration loaded
+    # from the first items in the array
+    def initialize(config_files)
         @config_files = config_files
-        @runtime_arguments = runtime_arguments
         @configuration_is_loaded = false
     end
 

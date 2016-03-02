@@ -6,7 +6,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 - Refactored snippets of code to be more consistent with "the Ruby way"
 - Improved code consistency
-- Add travis caching to bundler
+- Added travis caching to bundler
+- Removed unused parameter from the Configuration class initializer
 
 ### Added
 - `--version` flag

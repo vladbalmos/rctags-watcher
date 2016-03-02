@@ -1,3 +1,4 @@
+# %license%
 module RctagsWatcherVersion
     version_file_path = File.dirname(__FILE__) + '/../VERSION'
     version = 'dev'

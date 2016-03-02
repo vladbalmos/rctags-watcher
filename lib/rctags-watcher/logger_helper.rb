@@ -1,3 +1,4 @@
+# %license%
 module LoggerHelper
     attr_accessor :logger
 

@@ -1,3 +1,4 @@
+# %license%
 require_relative "file_matcher"
 require "rb-inotify"
 require "observer"

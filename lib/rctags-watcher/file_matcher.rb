@@ -1,3 +1,5 @@
+# %license% 
+
 module FileMatcher
 
     def self.file_matches_pattern?(filename, pattern)
