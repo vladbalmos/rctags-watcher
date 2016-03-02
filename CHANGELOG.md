@@ -8,6 +8,9 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Improved code consistency
 - Add travis caching to bundler
 
+### Added
+- `--version` flag
+
 ## [0.2.0] - 2016-02-29
 ### Added
 - Readme file

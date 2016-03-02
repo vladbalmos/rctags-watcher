@@ -4,8 +4,11 @@ require_relative "rctags-watcher/configuration"
 require_relative "rctags-watcher/project_watcher"
 require_relative "rctags-watcher/job_scheduler"
 require_relative "rctags-watcher/worker"
+require_relative "rctags-watcher/version"
 
 class RctagsWatcher < Logger::Application
+
+    include RctagsWatcherVersion
 
     def initialize(config_files = [])
         @config = nil

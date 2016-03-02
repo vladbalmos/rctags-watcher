@@ -25,7 +25,12 @@ opt_parser = OptionParser.new do |opts|
         unless File.file? commandline_options.config_file
             abort "Configuration file not found!"
         end
+    end
 
+    opts.on('-v', '--version',
+            'Show the version.') do 
+        puts RctagsWatcher::VERSION
+        exit 0
     end
 end
 
