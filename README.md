@@ -19,8 +19,14 @@ If your are using VIM and you need your **tags** file to be up to date, then thi
 - [rb-inotify](https://github.com/nex3/rb-inotify) >= 0.9.7
 - [exuberant-ctags](http://ctags.sourceforge.net/)
 
-## Install
-At the time of writing this, the only method to install it is by cloning this repo. A gem will be provided soon...
+## Installation
+Install the gem:
+
+```bash
+gem install rctags-watcher
+```
+
+Cloning the repo:
 
 ```bash
 git clone https://github.com/vladbalmos/rctags-watcher

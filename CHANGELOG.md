@@ -8,6 +8,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Improved code consistency
 - Added travis caching to bundler
 - Removed unused parameter from the Configuration class initializer
+- Updated documentation
 
 ### Added
 - `--version` flag
