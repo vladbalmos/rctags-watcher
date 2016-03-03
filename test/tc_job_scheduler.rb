@@ -47,7 +47,7 @@ class TestJobScheduler < Test::Unit::TestCase
             }
         }
 
-        assert_raise(RuntimeError.new('Project path does not exist: /unknown/dir')) { scheduler.make_job job_params }
+        assert_raises(RuntimeError.new('Project path does not exist: /unknown/dir')) { scheduler.make_job job_params }
     end
 
     def test_job_format_is_correct
