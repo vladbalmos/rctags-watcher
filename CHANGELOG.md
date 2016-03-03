@@ -2,7 +2,11 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
-## [Unreleased]
+## [0.2.17] - 2016-03-03
+### Changed
+- Fix version reporting issue
+
+## [0.2.16] - 2016-03-03
 ### Changed
 - Refactored snippets of code to be more consistent with "the Ruby way"
 - Improved code consistency

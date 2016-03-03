@@ -19,6 +19,7 @@ module RctagsWatcherGemSpec
 
     files = FileList['bin/rctags-watcher.rb',
                      'lib/**/*.rb',
+                     'lib/VERSION',
                      'data/**/*',
                      'Gemfile',
                      'LICENSE',
