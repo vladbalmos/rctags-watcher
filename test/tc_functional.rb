@@ -31,7 +31,7 @@ class TestFunctional < Test::Unit::TestCase
     # Append a php function a file in the project
     # Wait a bit
     # Assert that the tags file exists and that it contains our function
-    def test
+    def test_main
         config_file = ENV['TEST_CONFIG_FILE']
         binary = "bin/rctags-watcher.rb -c #{config_file}"
         puts $\, binary

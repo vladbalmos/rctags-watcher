@@ -9,6 +9,9 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Added travis caching to bundler
 - Removed unused parameter from the Configuration class initializer
 - Updated documentation
+- Added license notice to source files
+- Replaced `assert_raise_with_message` with `assert_raise`
+- Renamed the functional test case
 
 ### Added
 - `--version` flag
