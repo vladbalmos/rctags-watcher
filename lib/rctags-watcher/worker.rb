@@ -38,31 +38,14 @@ class Worker < Thread
         @break_loop_sem = Mutex.new
     end
 
-    def self.make_ctags_command(job_params)
-        return job_params[:test_command] if job_params.has_key? :test_command # aids with testing
-
-        ctags_binary = job_params[:ctags_binary]
-        scan_path = job_params[:scan_path]
-        tags_filename = job_params[:tags_filename]
-
-        languages_option = '--languages=' + job_params[:ctags_languages].join(',') if job_params[:ctags_languages].instance_of? Array
-
-        command = "#{ctags_binary}"
-        command += " #{languages_option}" if languages_option
-        command += " -f #{tags_filename}"
-        command += " -R" if job_params[:recursive]
-        command += " #{scan_path} 1>/dev/null 2>&1"
-
-        return command
-    end
-
     def work(work_queue)
         while job = work_queue.pop
             set_job_state :running
             command = self.class.make_ctags_command job
             log Logger::DEBUG, "Running command #{command}"
 
-            # Run command in a temporary dir
+            # Run command in a temporary directory so that the old "tags" file is still available
+            # during the scan process. 
             Dir.mktmpdir("rctags") do |tmpdir| 
                 log Logger::DEBUG, "Created #{tmpdir}"
                 Dir.chdir(tmpdir) {
@@ -83,7 +66,7 @@ class Worker < Thread
 
                     log Logger::INFO, "Job command executed successfully."
                     
-                    # Moving the file to its final location
+                    # Move the file to its final location, replacing the old "tags" file.
                     tmpsrc =  "#{tmpdir}/#{job[:tags_filename]}"
                     dst = "#{job[:scan_path]}/#{job[:tags_filename]}"
                     FileUtils.mv tmpsrc, dst, :force => true
@@ -95,6 +78,8 @@ class Worker < Thread
             break if break_loop?
         end
     end
+
+
 
     def stop
         unless job_running?
@@ -130,6 +115,24 @@ class Worker < Thread
 
     def break_loop?
         @break_loop_sem.synchronize { return @break_loop }
+    end
+
+    def self.make_ctags_command(job_params)
+        return job_params[:test_command] if job_params.has_key? :test_command # aids with testing
+
+        ctags_binary = job_params[:ctags_binary]
+        scan_path = job_params[:scan_path]
+        tags_filename = job_params[:tags_filename]
+
+        languages_option = '--languages=' + job_params[:ctags_languages].join(',') if job_params[:ctags_languages].instance_of? Array
+
+        command = "#{ctags_binary}"
+        command += " #{languages_option}" if languages_option
+        command += " -f #{tags_filename}"
+        command += " -R" if job_params[:recursive]
+        command += " #{scan_path} 1>/dev/null 2>&1"
+
+        return command
     end
 
 end

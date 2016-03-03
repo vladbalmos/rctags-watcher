@@ -24,6 +24,8 @@ require_relative "file_matcher"
 require "rb-inotify"
 require "observer"
 
+##
+# Wraps the rb-inotify API.
 class ProjectWatcher
     include Observable
 
@@ -57,6 +59,9 @@ class ProjectWatcher
 
     private 
 
+    ##
+    # Checks to see if the changed file matches the configured file pattern
+    # and notifies any observers.
     def process_filesystem_event(event)
         absolute_filepath = event.absolute_name
 

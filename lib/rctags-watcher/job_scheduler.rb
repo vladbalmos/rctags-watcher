@@ -55,6 +55,10 @@ class JobScheduler
         return true
     end
 
+    ##
+    # Prepare the job for the worker.
+    # Returns a hash containing everything the worker needs to start
+    # a new ctags job.
     def make_job(job_params)
         ctags_settings = job_params[:settings][:ctags_settings]
         project_settings = job_params[:settings][:project_settings]
@@ -70,7 +74,7 @@ class JobScheduler
         raise "Project path does not exist: #{scan_path}" unless File.directory? scan_path
 
         tags_filename = project_settings['tags_filename'].nil? ? 'tags' : project_settings["tags_filename"]
-        ctags_languages = prepare_ctags_languages project_settings["ctags_languages"]
+        ctags_languages = prepare_ctags_languages_args project_settings["ctags_languages"]
 
         job = {
             :name => job_params[:name] + '_ctags_job',
@@ -85,7 +89,7 @@ class JobScheduler
 
     private
 
-    def prepare_ctags_languages(languages)
+    def prepare_ctags_languages_args(languages)
         unless languages
             return
         end
