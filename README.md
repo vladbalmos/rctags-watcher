@@ -1,6 +1,7 @@
 # rctags-watcher
 
 [![Travis CI](https://travis-ci.org/vladbalmos/rctags-watcher.svg?branch=master)](https://travis-ci.org/vladbalmos/rctags-watcher)
+[![Gem Version](https://badge.fury.io/rb/rctags-watcher.svg)](https://badge.fury.io/rb/rctags-watcher)
 
 This is a little tool which watches for file system changes on directories specified in the configuration file and then runs `ctags` to generate **tags** files in them.
 
