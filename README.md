@@ -6,7 +6,7 @@
 This is a little tool which watches for file system changes on directories specified in the configuration file and then runs `ctags` to generate **tags** files in them.
 
 ## Why?
-If your are using VIM and you need your **tags** file to be up to date, then this tool is for you.  
+If you are using VIM and you need your **tags** file to be up to date, then this tool is for you.  
 **rctags-watcher** is a GNU/Linux program written in Ruby which uses inotify to detect changes on directories and then run `ctags` to regenerate the **tags** file.
 
 ## Features
