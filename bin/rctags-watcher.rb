@@ -28,60 +28,107 @@ require "etc"
 require "optparse"
 require "ostruct"
 
-DEFAULT_CONFIG_FILENAME = 'rctags-watcher.conf'
+module RctagsWatcherMain
 
+    DEFAULT_CONFIG_FILENAME = 'rctags-watcher.conf'
+    rctagswctl = RctagsWatcher.get_ctl_instance
 
-commandline_options = OpenStruct.new
-commandline_options.config_file = nil
+    ##
+    # Start the application using the passed in array of configuration files.
+    def self.run_using(config_files)
+        app = RctagsWatcher.new(config_files)
 
-opt_parser = OptionParser.new do |opts|
-    opts.banner = "Usage: rctags-watcher.rb [options.]"
-    opts.separator ""
-    opts.separator "Options:"
+        begin
+            app.start
+        rescue SignalException => e
+            if Signal.signame(e.signo) == "INT" or Signal.signame(e.signo) == "KILL"
+                app.stop
+                exit 0
+            end
 
-    opts.on('-c', '--config CONFIG_FILE',
-            'Use a custom configuration file.') do |config_file|
-        commandline_options.config_file = File.expand_path config_file
-
-        unless File.file? commandline_options.config_file
-            abort "Configuration file not found!"
+            raise e
         end
     end
 
-    opts.on('-v', '--version',
-            'Show the version.') do 
-        puts RctagsWatcher::VERSION
+    ##################################
+    # Parse the command line arguments
+    ##################################
+    commandline_options = OpenStruct.new
+    commandline_options.config_file = nil
+    commandline_options.daemon_mode = false
+    commandline_options.command = nil
+
+    opt_parser = OptionParser.new do |opts|
+        opts.banner = "Usage: rctags-watcher.rb [options] [COMMANDS]"
+        opts.separator ""
+        opts.separator "Options:"
+
+        opts.on('-c', '--config CONFIG_FILE',
+                'Use a custom configuration file.') do |config_file|
+            commandline_options.config_file = File.expand_path config_file
+
+            unless File.file? commandline_options.config_file
+                abort "Configuration file not found!"
+            end
+        end
+
+        opts.on('-d', '--daemon',
+                'Run as a daemon.') do
+            commandline_options.daemon_mode = true
+        end
+
+        opts.on('-v', '--version',
+                'Show the version.') do 
+            puts RctagsWatcher::VERSION
+            exit 0
+        end
+
+        opts.on('-h', '--help', 'Show this message') do
+            puts opts
+            puts "Commands:"
+            printf "    %-32s %s\n", "STOP", "Stop the current running instance. Useful when running in daemon mode."
+            exit 0
+        end
+    end
+
+    opt_parser.parse!(ARGV)
+
+    commandline_options.command = ARGV.shift
+
+    case commandline_options.command
+    when 'STOP'
+        rctagswctl.stop
+    end
+
+    ##########################################
+    # Decide which configuration files to load
+    ##########################################
+    config_files = []
+    unless commandline_options.config_file.nil?
+        config_files << commandline_options.config_file
+    else
+        local_config_file = File.expand_path('~') + '/.' + DEFAULT_CONFIG_FILENAME
+        global_config_file = Etc.sysconfdir + '/' + DEFAULT_CONFIG_FILENAME
+
+        if File.file? global_config_file
+            config_files << global_config_file
+        end
+
+        if File.file? local_config_file
+            config_files << local_config_file
+        end
+    end
+
+    ######################
+    # Start the program
+    ######################
+    if commandline_options.daemon_mode
+        fork do
+            run_using config_files
+        end
         exit 0
     end
-end
 
-opt_parser.parse!(ARGV)
+    run_using config_files
 
-config_files = []
-unless commandline_options.config_file.nil?
-    config_files << commandline_options.config_file
-else
-    local_config_file = File.expand_path('~') + '/.' + DEFAULT_CONFIG_FILENAME
-    global_config_file = Etc.sysconfdir + '/' + DEFAULT_CONFIG_FILENAME
-
-    if File.file? global_config_file
-        config_files << global_config_file
-    end
-
-    if File.file? local_config_file
-        config_files << local_config_file
-    end
-end
-
-app = RctagsWatcher.new(config_files)
-
-begin
-    app.start
-rescue SignalException => e
-    if Signal.signame(e.signo) == "INT" or Signal.signame(e.signo) == "KILL"
-        app.stop
-        exit 0
-    end
-
-    raise e
 end

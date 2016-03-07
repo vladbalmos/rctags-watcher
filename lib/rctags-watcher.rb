@@ -91,6 +91,10 @@ class RctagsWatcher < Logger::Application
         @job_scheduler.schedule job_params
     end
 
+    ##
+    # Return a handle to the Control object
+    def self.get_ctl_instance
+    end
 
     private
 
