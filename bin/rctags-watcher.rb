@@ -27,21 +27,28 @@ require "rctags-watcher" unless File.file?((File.dirname __FILE__) + "/../lib/rc
 require "etc"
 require "optparse"
 require "ostruct"
+require "tmpdir"
 
 module RctagsWatcherMain
 
     DEFAULT_CONFIG_FILENAME = 'rctags-watcher.conf'
-    rctagswctl = RctagsWatcher.get_ctl_instance
+    tmp_dir = Dir.tmpdir
+    userID  = Process.uid
+    socket_path = "#{tmp_dir}/rctags-watcher-#{userID}.sock"
+
+    rctagswctl = RctagsWatcher.initialize_control_component socket_path
 
     ##
     # Start the application using the passed in array of configuration files.
     def self.run_using(config_files)
         app = RctagsWatcher.new(config_files)
+        rctagswctl.listen_for_commands
 
         begin
             app.start
         rescue SignalException => e
             if Signal.signame(e.signo) == "INT" or Signal.signame(e.signo) == "KILL"
+                rctagswctl.stop_listening
                 app.stop
                 exit 0
             end

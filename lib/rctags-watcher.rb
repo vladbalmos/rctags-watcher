@@ -27,6 +27,7 @@ require_relative "rctags-watcher/project_watcher"
 require_relative "rctags-watcher/job_scheduler"
 require_relative "rctags-watcher/worker"
 require_relative "rctags-watcher/version"
+require_relative "rctags-watcher/control"
 
 ##
 # The main application class.
@@ -44,7 +45,6 @@ class RctagsWatcher < Logger::Application
         @config = nil
         @watchers = {}
         @notifier = INotify::Notifier.new
-
 
         super('RctagsWatcher')
 
@@ -93,7 +93,9 @@ class RctagsWatcher < Logger::Application
 
     ##
     # Return a handle to the Control object
-    def self.get_ctl_instance
+    def self.initialize_control_component(socket_path)
+        control = Control.new(socket_path)
+        return control
     end
 
     private
