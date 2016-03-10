@@ -27,18 +27,46 @@ require "thread"
 class Control
 
     def initialize(socket_path)
-        @socket = UNIXSocket.new(socket_path)
+        @socket_path = socket_path
+        @server = nil
     end
 
     def listen_for_commands
+        Thread.new do
+            @server = UNIXServer.new(@socket_path)
+
+            loop do
+                client = @server.accept
+                command, _unused = client.recvfrom 1024
+                command.strip!
+                response = execute_command command
+                response && client.puts(response)
+                client.close
+            end
+        end
+    end
+
+    def execute_command(command)
+        if command == "get_pid"
+            return Process.pid
+        end
+        puts command
     end
 
     def stop_listening
+        puts "Right here - right now"
+        @server.close
+        File.unlink @socket_path
     end
 
     def stop
-        hash = {:command => 'stop'}
-        stop_command = JSON.generate hash
-        @socket.send stop_command
+        # Get the pid
+        socket = UNIXSocket.new(@socket_path)
+        socket.puts "get_pid"
+        process_pid = socket.gets
+        socket.close
+
+        # Send the kill signal
+        Process.kill "TERM", process_pid.to_i
     end
 end

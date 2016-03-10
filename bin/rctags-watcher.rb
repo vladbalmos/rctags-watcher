@@ -36,19 +36,19 @@ module RctagsWatcherMain
     userID  = Process.uid
     socket_path = "#{tmp_dir}/rctags-watcher-#{userID}.sock"
 
-    rctagswctl = RctagsWatcher.initialize_control_component socket_path
+    @@rctagswctl = RctagsWatcher.initialize_control_component socket_path
 
     ##
     # Start the application using the passed in array of configuration files.
     def self.run_using(config_files)
         app = RctagsWatcher.new(config_files)
-        rctagswctl.listen_for_commands
+        @@rctagswctl.listen_for_commands
 
         begin
             app.start
         rescue SignalException => e
             if Signal.signame(e.signo) == "INT" or Signal.signame(e.signo) == "KILL"
-                rctagswctl.stop_listening
+                @@rctagswctl.stop_listening
                 app.stop
                 exit 0
             end
@@ -104,7 +104,8 @@ module RctagsWatcherMain
 
     case commandline_options.command
     when 'STOP'
-        rctagswctl.stop
+        @@rctagswctl.stop
+        exit 0
     end
 
     ##########################################
@@ -130,6 +131,7 @@ module RctagsWatcherMain
     # Start the program
     ######################
     if commandline_options.daemon_mode
+        abort "Another instance is already running." if File.socket? socket_path
         fork do
             run_using config_files
         end
