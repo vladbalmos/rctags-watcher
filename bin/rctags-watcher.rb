@@ -28,6 +28,7 @@ require "etc"
 require "optparse"
 require "ostruct"
 require "tmpdir"
+require "logger"
 
 module RctagsWatcherMain
 
@@ -42,12 +43,13 @@ module RctagsWatcherMain
     # Start the application using the passed in array of configuration files.
     def self.run_using(config_files)
         app = RctagsWatcher.new(config_files)
+        @@rctagswctl.logger = app.logger
         @@rctagswctl.listen_for_commands
 
         begin
             app.start
         rescue SignalException => e
-            if Signal.signame(e.signo) == "INT" or Signal.signame(e.signo) == "KILL"
+            if Signal.signame(e.signo) == "INT" or Signal.signame(e.signo) == "TERM"
                 @@rctagswctl.stop_listening
                 app.stop
                 exit 0
@@ -93,7 +95,7 @@ module RctagsWatcherMain
         opts.on('-h', '--help', 'Show this message') do
             puts opts
             puts "Commands:"
-            printf "    %-32s %s\n", "STOP", "Stop the current running instance. Useful when running in daemon mode."
+            printf "    %-32s %s\n", "stop", "Stop the current running instance. Useful when running in daemon mode."
             exit 0
         end
     end
@@ -103,7 +105,7 @@ module RctagsWatcherMain
     commandline_options.command = ARGV.shift
 
     case commandline_options.command
-    when 'STOP'
+    when 'stop'
         @@rctagswctl.stop
         exit 0
     end

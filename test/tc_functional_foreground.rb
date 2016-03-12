@@ -24,7 +24,7 @@ require "test/unit"
 require "open3"
 require "fileutils"
 
-class TestFunctional < Test::Unit::TestCase
+class TestFunctionalForeground < Test::Unit::TestCase
 
     # So it's like this:
     # Run the program 
@@ -32,6 +32,7 @@ class TestFunctional < Test::Unit::TestCase
     # Wait a bit
     # Assert that the tags file exists and that it contains our function
     def test_main
+        # Start the program
         config_file = ENV['TEST_CONFIG_FILE']
         binary = "bin/rctags-watcher.rb -c #{config_file}"
         puts $\, binary
@@ -50,32 +51,34 @@ class TestFunctional < Test::Unit::TestCase
             echo 'hello from the rctags_functional_test';
         }
         EOT
-
         File.open(php_file, 'a') { |f| f.puts test_php_function }
-        puts $\, "Modify source file command exit status: #{$?.to_i}"
 
+        # Kill the program
         sleep 5
-
         Process.kill("INT", pid)
 
+        # Show us some output
         output_stream = stdout.read
         error_stream  = stderr.read
 
         puts $\, "Output stream: (#{output_stream.length})", "-------------------", output_stream
         puts $\, "Error stream: (#{error_stream.length})", "-------------------", error_stream
 
+        # Cleanup
         stdin.close
         stdout.close
         stderr.close
 
+        # Did it have a clean exit?
         exit_status = wait_thr.value
         assert_equal 0, exit_status.to_i
-
         assert_equal 0, error_stream.length
 
+        # Do we have a tags file?
         expected_tags_file = ENV['TEST_TAGS_FILE']
         assert_equal true, File.file?(expected_tags_file)
 
+        # Does the tags file includes our dummy function?
         assert_equal true, File.size(expected_tags_file) > 0
         assert_equal true, File.read(expected_tags_file).include?('rctags_watcher_test_fn')
 

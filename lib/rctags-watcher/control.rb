@@ -20,30 +20,72 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+require_relative "logger_helper"
+require "logger"
 require "socket"
 require "json"
 require "thread"
 
 class Control
 
+    include LoggerHelper
+
     def initialize(socket_path)
         @socket_path = socket_path
         @server = nil
+        @server_thread = nil
     end
 
     def listen_for_commands
-        Thread.new do
+        log Logger::DEBUG, "Starting the remote control thread"
+        @server_thread = Thread.new do
             @server = UNIXServer.new(@socket_path)
 
+            log Logger::INFO, "Created UNIXServer at #{@socket_path}"
             loop do
-                client = @server.accept
-                command, _unused = client.recvfrom 1024
-                command.strip!
-                response = execute_command command
-                response && client.puts(response)
-                client.close
+                begin
+                    client = @server.accept
+                rescue SystemCallError => e
+                    log Logger::ERROR, "Caught exception while waiting for clients: #{e.message}"
+                    break
+                end
+
+                handle_client client
+            end
+            log Logger::DEBUG, "Exited event loop"
+        end
+    end
+
+    def handle_client(client)
+        log Logger::DEBUG, "New client connected"
+
+        begin
+            command, _unused = client.recvfrom 1024
+        rescue SystemCallError => e
+            log Logger::ERROR, "Error receiving data from client: #{e.message}, #{e.backtrace}"
+            return
+        end
+
+        command.strip!
+
+        log Logger::INFO, "Executing command #{command}"
+        response = execute_command command
+        if response
+            log Logger::DEBUG, "Sending response to client: #{response}"
+
+            begin
+                client.puts response
+            rescue SystemCallError => e
+                log Logger::ERROR, "Error writing data to client: #{e.message}, #{e.backtrace}"
+                return
             end
         end
+
+        begin
+            client.close
+        rescue
+        end
+        log Logger::DEBUG, "Disconnected client"
     end
 
     def execute_command(command)
@@ -54,14 +96,25 @@ class Control
     end
 
     def stop_listening
-        puts "Right here - right now"
+        log Logger::DEBUG, "Stopping UNIXServer ..."
+
+        @server.shutdown
         @server.close
+        @server_thread.join 1
+
         File.unlink @socket_path
+        log Logger::INFO, "UNIXServer stopped"
     end
 
     def stop
         # Get the pid
-        socket = UNIXSocket.new(@socket_path)
+        begin
+            socket = UNIXSocket.new(@socket_path)
+        rescue SystemCallError => e
+            abort "Unable to connect to socket. Error: #{e.message}"
+            return
+        end
+
         socket.puts "get_pid"
         process_pid = socket.gets
         socket.close

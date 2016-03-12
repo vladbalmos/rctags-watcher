@@ -2,6 +2,10 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased
+### Added
+- Implemented "daemon mode"
+
 ## [0.2.17] - 2016-03-03
 ### Changed
 - Fix version reporting issue
