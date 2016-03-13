@@ -6,6 +6,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 - Implemented "daemon mode"
 - Updated documentation
+- Added Dockerfile for testing unreleased gems
 
 ## [0.2.17] - 2016-03-03
 ### Changed

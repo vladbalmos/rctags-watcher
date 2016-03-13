@@ -1,0 +1,9 @@
+FROM ruby:2.1
+RUN apt-get update -y && apt-get install exuberant-ctags vim -y
+COPY . /rctags-watcher
+WORKDIR /rctags-watcher
+RUN bundle install
+RUN VERSION=99.0-dev rake build_gem
+RUN gem install build/gem/rctags-watcher-99.0.pre.dev-x86_64-linux.gem
+RUN cp data/rctags-watcher.conf.dist ~/.rctags-watcher.conf
+RUN rake install_sample_project
