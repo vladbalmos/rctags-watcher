@@ -2,9 +2,10 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
-## Unreleased
+## [0.3]
 ### Added
 - Implemented "daemon mode"
+- Updated documentation
 
 ## [0.2.17] - 2016-03-03
 ### Changed

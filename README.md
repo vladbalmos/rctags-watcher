@@ -41,6 +41,23 @@ cp data/rctags-watcher.conf.dist ~/.rctags-watcher.conf
 bin/rctags-watcher.rb
 ```
 
+## Usage
+**rctags-watcher** runs by default in foreground. You can run it as a daemon by passing the `-d` flag when starting it.
+
+```bash
+bin/rctags-watcher.rb -d [--daemon]
+```
+
+Once in "daemon-mode" you can kill it by sending the stop command:
+
+```bash
+bin/rctags-watcher.rb stop
+```
+
+Communication with the daemon is done through a unix socket.
+
+**IMPORTANT:** When running the program as a deamon change the logger destination from **STDOUT** to a file, or else you will see the any messages printed in your terminal.
+
 ## Configuration
 By default **rctags-watcher** reads the following configuration files if they exist:
 
@@ -56,6 +73,7 @@ bin/rctags-watcher.rb --config /path/to/my/custom/config/file
 This method won't load the main `/etc/rctags-watcher.conf` file or the one present in your $HOME directory. Each configuration change will require you to restart the **rctags-watcher** process.
 
 To get started copy the default config file `data/rctags-watcher.conf` to `~/.rctags-watcher.conf` and create a new project section in it. See the [sample project](https://raw.githubusercontent.com/vladbalmos/rctags-watcher/master/data/rctags-watcher.conf.dist) for more information.
+
 
 ## Motivation
 I wanted to learn Ruby and this seemed a great way to shoot two birds with one stone.
