@@ -46,6 +46,11 @@ task :test_functional do
     Rake::Task['test_functional_daemon'].invoke
 end
 
+task :test_all do
+    Rake::Task['test'].invoke
+    Rake::Task['test_functional'].invoke
+end
+
 task :build_gem do
     gemspec = File.basename(File.dirname __FILE__) + '.gemspec'
     mkdir_p 'build/gem'

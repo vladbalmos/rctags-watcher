@@ -10,6 +10,5 @@ addons:
       - exuberant-ctags
 
 script:
-  - bundle exec rake test
-  - bundle exec rake test_functional
+  - bundle exec rake test_all
 
