@@ -51,7 +51,7 @@ task :test_all do
     Rake::Task['test_functional'].invoke
 end
 
-task :build_gem do
+task :build_gem => :test_all do
     gemspec = File.basename(File.dirname __FILE__) + '.gemspec'
     mkdir_p 'build/gem'
     output = `gem build #{gemspec}`
