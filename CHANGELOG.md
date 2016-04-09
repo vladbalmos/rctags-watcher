@@ -2,6 +2,13 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [Unreleased]
+### Changed
+- Fix issue with missing Logger::Application
+- Catch IOError when accepting clients
+- Test against multiple ruby version on travis CI
+- Add 'test-unit' gem dependency
+
 ## [0.3]
 ### Added
 - Implemented "daemon mode"

@@ -45,7 +45,7 @@ class Control
             loop do
                 begin
                     client = @server.accept
-                rescue SystemCallError => e
+                rescue SystemCallError, IOError => e
                     log Logger::ERROR, "Caught exception while waiting for clients: #{e.message}"
                     break
                 end
