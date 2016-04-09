@@ -141,5 +141,4 @@ module RctagsWatcherMain
     end
 
     run_using config_files
-
 end

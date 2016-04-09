@@ -21,6 +21,7 @@
 # SOFTWARE.
 
 require "logger"
+require "logger-application" unless defined? Logger::Application
 require "rb-inotify"
 require_relative "rctags-watcher/configuration"
 require_relative "rctags-watcher/project_watcher"
