@@ -7,6 +7,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Fix issue with missing Logger::Application
 - Catch IOError when accepting clients
 - Test against multiple ruby version on travis CI
+- Add 'test-unit' gem dependency
 
 ## [0.3]
 ### Added
