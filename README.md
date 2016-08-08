@@ -77,6 +77,3 @@ To get started copy the default config file `data/rctags-watcher.conf` to `~/.rc
 
 ## Motivation
 I wanted to learn Ruby and this seemed a great way to shoot two birds with one stone.
-
-## Stable version
-Danger! This is alpha quality software written by a Ruby begginer, as such, don't be surprised if your cat dies. What works for me, might not work for you. Use it at your own peril!
